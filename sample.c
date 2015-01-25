@@ -17,10 +17,7 @@ int nroute[MAXCITY]={0};      /* array for route data */
 
 double Dis(double x, double y, double x2, double y2){
 
-	double l;
-
-	l = sqrt(pow(x - x2,2)  + pow(y - y2,2));
-	return l;
+	return sqrt(pow(x - x2,2)  + pow(y - y2,2));
 }
 
 void resize(int w, int h){
@@ -64,9 +61,9 @@ int main(int argc,char *argv[])
   int i,j,ii,jj,nrnd;
   double rx,ry,rr;
   clock_t cpu_time1,cpu_time2;
-  clock_t t[10]={0},tave=0;
+  clock_t t[10]={0};
   int time;
-  double ave=10.0;
+  double tave=0.0,ave=1.0;
 
 
   /* Output how to use this program*/
@@ -139,28 +136,28 @@ int main(int argc,char *argv[])
   int findnode;// 計算してるノードがすでに通ってるか
   int flag;//     計算してるノードがすでに通ってるかの判定
 
-  min = 10000;
-  dist = 0;
+  min       = 10000;
+  dist      = 0;
   nroute[0] = 0;// スタートを0に固定
-  prenum = nroute[0];
-  flag = 0;
+  prenum    = nroute[0];
+  flag      = 0;
 
   // 計算回数
   for(culnum=1; culnum<ncity; culnum++) {
 
-// 	  printf("-------------------------------\n");
-// 	  printf("cluculate num %d\n",culnum);
+	  printf("-------------------------------\n");
+	  printf("cluculate num %d\n",culnum);
 	  // 距離を計算するノードの番号
-	  for(nodenum=1; nodenum<ncity; nodenum++){
+	  for(nodenum = 1; nodenum < ncity; nodenum++){
 
-// 		  printf("nodenum num %d\n",nodenum);
+		  printf("nodenum num %d\n",nodenum);
 		  // 計算してるノードがすでに通ったかどうかを確かめる
-		  for (findnode=1; findnode<ncity; findnode++) {
+		  for (findnode = 1; findnode < ncity; findnode++) {
 			  if(nroute[findnode] == nodenum){
 				 
 				  flag = 0;
-// 				  printf("findnode=%d\n",findnode);
-// 				  printf("nroute[%d] nodenum=%d\n",findnode,nodenum);
+				  printf("findnode=%d\n",findnode);
+				  printf("nroute[%d] nodenum=%d\n",findnode,nodenum);
 				  break;
 			  }
 			  else flag=1;
@@ -175,36 +172,29 @@ int main(int argc,char *argv[])
 				  nroute[culnum] = nodenum;
 				  min = dist;
 
-// 				  printf("not path, in nroute[%d] %d\n",culnum,nodenum);
-// 				  printf("min=%lf dist=%lf\n",min,dist);
-
+				  printf("not path, in nroute[%d] %d\n",culnum,nodenum);
+				  printf("min=%lf dist=%lf\n",min,dist);
 			  }
 			  else{
-// 				  printf("dist over mini\n");
+				  printf("dist over mini\n");
 			  }
 		  }
 		  else{
-// 			  printf("already path node\n");
+			  printf("already path node\n");
 		  }
 
-// 		  printf("findnode loop out \n");
-// 		  printf("\n");
+		  printf("findnode loop out \n");
+		  printf("\n");
 	  }// nodenum 
 
 	  prenum = nroute[culnum];
-// 	  printf("prenum[%d]=%d\n",culnum,prenum);
-	  min = 10000;
+	  printf("prenum[%d]=%d\n",culnum,prenum);
+	  min = 10000000.0;
 
-// 	  printf(" \n");
-// 	  printf("-------------------------------\n");
+	  printf(" \n");
+	  printf("-------------------------------\n");
 
   }// culnum
-
-//   printf("route node num\n");
-//   for(culnum=0; culnum<ncity; culnum++){
-//
-// 	  printf("nroute[%d] = %d\n",culnum,nroute[culnum]);
-//   }
 
 
 
@@ -219,9 +209,6 @@ int main(int argc,char *argv[])
   printf("-------------------------------\n");
   printf("Route Search Algorithm END\n");
   printf("-------------------------------\n");
-
-
-
 
   /*
     !!---------------------------------------
@@ -249,27 +236,31 @@ int main(int argc,char *argv[])
 
   d=d2=0.0;
 
+  // 元の経路
+  for (a3 = 0; a3 < ncity-1;  a3++){
+
+	  d += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[a3+1]],y[nroute[a3+1]] );
+  }
+  // 最後のノードから初期位置までの距離を足す
+  d += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[0]],y[nroute[0]] );
+	
   // 入れ替え
-  for (a = 1; a < ncity; a++){
+  for (a = 0; a < ncity; a++){
 
 // 	  printf("%d\n",a);
-	  d=0.0;
-	  // 元の経路長
-	  for (a3 = 0; a3 < ncity-1;  a3++) {
+	  for (a2 = 0; a2 < ncity+1; a2++){
+		  if(a2==ncity){
 
-		  d += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[a3+1]],y[nroute[a3+1]] );
-	  }
-
-	  // 最後のノードから初期位置までの距離を足す
-	  d += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[0]],y[nroute[0]] );
-	
-	  for (a2 = a+1; a2 < ncity; a2++) {
-
-		  swap(nroute[a], nroute[a2]);
+			  if(a != 0) swap(nroute[a], nroute[0]);
+			  else continue;
+		  }
+		  else if(a==a2) continue;
+		  else  swap(nroute[a], nroute[a2]);
+		  
 		  d2=0.0;
 
 		  // 組み換え後の距離
-		  for (a3 = 0; a3 < ncity-1;  a3++) {
+		  for (a3 = 0; a3 < ncity-1;  a3++){
 
 			  d2 += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[a3+1]],y[nroute[a3+1]] );
 		  }
@@ -279,8 +270,8 @@ int main(int argc,char *argv[])
 		  if(d2>d){
 
 // 			  printf("not change\n");
-			  swap(nroute[a], nroute[a2]);
-
+			  if(a2==ncity) swap(nroute[a], nroute[0]);
+			  else  swap(nroute[a], nroute[a2]);
 		  }
 		  else {
 
@@ -288,9 +279,9 @@ int main(int argc,char *argv[])
 // 			  printf("node num nroute[a]=%d nroute[a2]=%d\n", nroute[a], nroute[a2]);
 // 			  printf("restart for loop \n");
 			  d=d2;
-			  a=1;
+			  a=0;
+			  break;
 		  }
-		
 	  }// a2
 			  
 // 	  printf("%d\n",a);
@@ -326,9 +317,9 @@ int main(int argc,char *argv[])
   }
 
 
-  for(time=0; time<10; time++){
+  for(time=0; time<ave; time++){
 
-	  tave += t[time];
+	  tave += (double)t[time];
   }
 
   tave = tave/ave;
@@ -378,7 +369,7 @@ int main(int argc,char *argv[])
 
   /* Output Computational Time */
   printf("\n");
-  printf("Elapsed Time: %20.14f sec\n",(double)(tave)/(double)CLOCKS_PER_SEC);
+  printf("Elapsed Time: %20.14f sec\n",tave/(double)CLOCKS_PER_SEC);
 
 
 
