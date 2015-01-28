@@ -42,7 +42,7 @@ void pathroute(){
 	for (a = 0; a < ncity; a++) {
 
 		// 225以降のデータ用
-		if(ncity>100) glVertex2d(x[nroute[a]]/1000.0, y[nroute[a]]/1000.0);
+		if(ncity>100) glVertex2d(x[nroute[a]]/700.0, y[nroute[a]]/700.0);
 		else glVertex2d(x[nroute[a]], y[nroute[a]]);
 	}
 
@@ -61,8 +61,8 @@ int main(int argc,char *argv[])
   int i,j,ii,jj,nrnd;
   double rx,ry,rr;
   clock_t cpu_time1,cpu_time2;
-  clock_t t[10]={0};
-  int time;
+  clock_t ti[1000000];
+  int t;
   double tave=0.0,ave=1.0;
 
 
@@ -101,11 +101,8 @@ int main(int argc,char *argv[])
     printf("%d,%lf,%lf\n",i,x[i],y[i]);
   }
 
-
-  for (time = 0; time < ave; time++) {
+  for (t = 0; t < ave; t++) {
 	
-
-
   /* Stop Watch START*/
   cpu_time1 = clock();
 
@@ -145,23 +142,18 @@ int main(int argc,char *argv[])
   // 計算回数
   for(culnum=1; culnum<ncity; culnum++) {
 
-	  printf("-------------------------------\n");
-	  printf("cluculate num %d\n",culnum);
 	  // 距離を計算するノードの番号
-	  for(nodenum = 1; nodenum < ncity; nodenum++){
+	  for(nodenum = 0; nodenum < ncity; nodenum++){
 
-		  printf("nodenum num %d\n",nodenum);
 		  // 計算してるノードがすでに通ったかどうかを確かめる
 		  for (findnode = 1; findnode < ncity; findnode++) {
 			  if(nroute[findnode] == nodenum){
 				 
 				  flag = 0;
-				  printf("findnode=%d\n",findnode);
-				  printf("nroute[%d] nodenum=%d\n",findnode,nodenum);
 				  break;
 			  }
 			  else flag=1;
-		  }// findnode
+		  }
 
 		  // ノードがまだ通っていなければ
 		  if(flag){
@@ -171,40 +163,27 @@ int main(int argc,char *argv[])
 					  
 				  nroute[culnum] = nodenum;
 				  min = dist;
-
-				  printf("not path, in nroute[%d] %d\n",culnum,nodenum);
-				  printf("min=%lf dist=%lf\n",min,dist);
-			  }
-			  else{
-				  printf("dist over mini\n");
 			  }
 		  }
-		  else{
-			  printf("already path node\n");
-		  }
 
-		  printf("findnode loop out \n");
-		  printf("\n");
-	  }// nodenum 
+	  }
 
 	  prenum = nroute[culnum];
-	  printf("prenum[%d]=%d\n",culnum,prenum);
 	  min = 10000000.0;
 
-	  printf(" \n");
-	  printf("-------------------------------\n");
+// 	  printf("-------------------------------\n");
 
   }// culnum
 
 
 
   /* generate random number */
-  /*srand((unsigned)time(NULL));
-
-  for(i=0; i < 100; i++){
-    nrnd = rand()%(ncity);
-    printf("%d\n",nrnd);
-    } */
+//   srand((unsigned)time(NULL));
+//
+//   for(i=0; i < 100; i++){
+//     nrnd = rand()%(ncity);
+//     printf("%d\n",nrnd);
+//     } 
 
   printf("-------------------------------\n");
   printf("Route Search Algorithm END\n");
@@ -219,7 +198,8 @@ int main(int argc,char *argv[])
   */
 
 
-/*
+
+  /*
     !!---------------------------------------
     !!
     !! 2-opt algorithm start!
@@ -231,66 +211,58 @@ int main(int argc,char *argv[])
   printf("2-opt Algorithm START\n");
   printf("-------------------------------\n");
 
-  int a,a2,a3;
-  double d,d2;
+  int a,a2;
+  double l_pre,l_aft;
+  int count;
 
-  d=d2=0.0;
+  l_pre=l_aft=0.0;
 
-  // 元の経路
-  for (a3 = 0; a3 < ncity-1;  a3++){
+  while(1){
 
-	  d += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[a3+1]],y[nroute[a3+1]] );
-  }
-	
-  // 入れ替え
-  for (a = 0; a < ncity; a++){
+	  count=0;
 
-// 	  printf("%d\n",a);
-	  for (a2 = 0; a2 < ncity+1; a2++){
-		  if(a2==ncity){
-
-			  if(a != 0) swap(nroute[a], nroute[0]);
-			  else continue;
-		  }
-		  else if(a==a2) continue;
-		  else  swap(nroute[a], nroute[a2]);
+	  for (a = 0; a < ncity-2; a++){
+		  for (a2 = a+2; a2 < ncity; a2++){
 		  
-		  d2=0.0;
+			  l_pre=l_aft=0.0;
+			  if(a2 == ncity-1){
+				  if(a > 0){
+		  
+					  l_pre  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a+1]],y[nroute[a+1]] );
+					  l_pre += Dis( x[nroute[a2]],y[nroute[a2]], x[nroute[0]],y[nroute[0]] );
+				
+					  l_aft  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a2]],y[nroute[a2]] );
+					  l_aft += Dis( x[nroute[a+1]],y[nroute[a+1]], x[nroute[0]],y[nroute[0]] );
+				  }
+				  else continue;
+			  }
+			  else{
 
-		  // 組み換え後の距離
-		  for (a3 = 0; a3 < ncity-1;  a3++){
-
-			  d2 += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[a3+1]],y[nroute[a3+1]] );
-		  }
-		  d2 += Dis( x[nroute[a3]],y[nroute[a3]], x[nroute[0]],y[nroute[0]] );
-
-		  if(d2>d){
-
-// 			  printf("not change\n");
-			  if(a2==ncity) swap(nroute[a], nroute[0]);
-			  else  swap(nroute[a], nroute[a2]);
-		  }
-		  else {
-
-// 			  printf("change\n");
-// 			  printf("node num nroute[a]=%d nroute[a2]=%d\n", nroute[a], nroute[a2]);
-// 			  printf("restart for loop \n");
-			  d=d2;
-			  a=0;
-			  break;
-		  }
-	  }// a2
+				  l_pre  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a+1]],y[nroute[a+1]] );
+				  l_pre += Dis( x[nroute[a2]],y[nroute[a2]], x[nroute[a2+1]],y[nroute[a2+1]] );
 			  
-// 	  printf("%d\n",a);
-// 	  printf("\n");
-// 	  printf("\n");
-  }// a
+				  l_aft  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a2]],y[nroute[a2]] );
+				  l_aft += Dis( x[nroute[a+1]],y[nroute[a+1]], x[nroute[a2+1]],y[nroute[a2+1]] );
+			  }
+		 
+			  // 組み換え前と後の比較
+			  if( l_aft < l_pre ){
+				  if(a2 == ncity-1) swap(nroute[a+1], nroute[a2]);
+				  else  swap(nroute[a+1], nroute[a2]);
+
+				  count++;
+			  }
+		  }// a2
+	  }// a
+	  if(count==0) break;
+  }// while 
 
   printf("-------------------------------\n");
   printf("2-opt Algorithm end\n");
   printf("-------------------------------\n");
 
-/*
+
+  /*
     !!---------------------------------------
     !!
     !! 2-opt algorithm END!
@@ -299,26 +271,24 @@ int main(int argc,char *argv[])
   */
 
 
-
   /* Stop Watch END */
   cpu_time2 = clock();
 
-
-  t[time]=cpu_time2-cpu_time1;
-
-  if(time<ave-1){
+  ti[t]=cpu_time2-cpu_time1;
+  if(t<ave-1){
 	for (a = 0; a < ncity; a++) {
 		nroute[a]=0;
 	} 
   }
+
+
+
+  }// for time
+
+  for(t=0; t<ave; t++){
+
+	  tave += (double)ti[t];
   }
-
-
-  for(time=0; time<ave; time++){
-
-	  tave += (double)t[time];
-  }
-
   tave = tave/ave;
 
 
