@@ -63,7 +63,7 @@ int main(int argc,char *argv[])
   clock_t cpu_time1,cpu_time2;
   clock_t ti[1000000];
   int t;
-  double tave=0.0,ave=1.0;
+  double tave=0.0,ave=10.0;
 
 
   /* Output how to use this program*/
@@ -133,7 +133,7 @@ int main(int argc,char *argv[])
   int findnode;// 計算してるノードがすでに通ってるか
   int flag;//     計算してるノードがすでに通ってるかの判定
 
-  min       = 10000;
+  min       = 1000000.0;
   dist      = 0;
   nroute[0] = 0;// スタートを0に固定
   prenum    = nroute[0];
@@ -169,12 +169,11 @@ int main(int argc,char *argv[])
 	  }
 
 	  prenum = nroute[culnum];
-	  min = 10000000.0;
+	  min = 1000000.0;
 
 // 	  printf("-------------------------------\n");
 
   }// culnum
-
 
 
   /* generate random number */
@@ -215,22 +214,20 @@ int main(int argc,char *argv[])
   double l_pre,l_aft;
   int count;
 
-  l_pre=l_aft=0.0;
-
   while(1){
 
 	  count=0;
 
 	  for (a = 0; a < ncity-2; a++){
 		  for (a2 = a+2; a2 < ncity; a2++){
-		  
+
 			  l_pre=l_aft=0.0;
 			  if(a2 == ncity-1){
 				  if(a > 0){
-		  
+
 					  l_pre  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a+1]],y[nroute[a+1]] );
 					  l_pre += Dis( x[nroute[a2]],y[nroute[a2]], x[nroute[0]],y[nroute[0]] );
-				
+
 					  l_aft  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a2]],y[nroute[a2]] );
 					  l_aft += Dis( x[nroute[a+1]],y[nroute[a+1]], x[nroute[0]],y[nroute[0]] );
 				  }
@@ -240,16 +237,15 @@ int main(int argc,char *argv[])
 
 				  l_pre  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a+1]],y[nroute[a+1]] );
 				  l_pre += Dis( x[nroute[a2]],y[nroute[a2]], x[nroute[a2+1]],y[nroute[a2+1]] );
-			  
+
 				  l_aft  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a2]],y[nroute[a2]] );
 				  l_aft += Dis( x[nroute[a+1]],y[nroute[a+1]], x[nroute[a2+1]],y[nroute[a2+1]] );
 			  }
 		 
 			  // 組み換え前と後の比較
 			  if( l_aft < l_pre ){
-				  if(a2 == ncity-1) swap(nroute[a+1], nroute[a2]);
-				  else  swap(nroute[a+1], nroute[a2]);
 
+				  swap(nroute[a+1], nroute[a2]);
 				  count++;
 			  }
 		  }// a2
