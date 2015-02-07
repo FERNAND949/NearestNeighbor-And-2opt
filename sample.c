@@ -147,8 +147,8 @@ int main(int argc,char *argv[])
 
 		  // 計算してるノードがすでに通ったかどうかを確かめる
 		  for (findnode = 1; findnode < ncity; findnode++) {
+
 			  if(nroute[findnode] == nodenum){
-				 
 				  flag = 0;
 				  break;
 			  }
@@ -157,10 +157,8 @@ int main(int argc,char *argv[])
 
 		  // ノードがまだ通っていなければ
 		  if(flag){
-
 			  dist = sqrt(pow(x[prenum] - x[nodenum],2)  + pow(y[prenum] - y[nodenum],2));
 			  if (dist < min) {
-					  
 				  nroute[culnum] = nodenum;
 				  min = dist;
 			  }
@@ -224,7 +222,6 @@ int main(int argc,char *argv[])
 			  l_pre=l_aft=0.0;
 			  if(a2 == ncity-1){
 				  if(a > 0){
-
 					  l_pre  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a+1]],y[nroute[a+1]] );
 					  l_pre += Dis( x[nroute[a2]],y[nroute[a2]], x[nroute[0]],y[nroute[0]] );
 
@@ -234,7 +231,6 @@ int main(int argc,char *argv[])
 				  else continue;
 			  }
 			  else{
-
 				  l_pre  = Dis( x[nroute[a]],y[nroute[a]], x[nroute[a+1]],y[nroute[a+1]] );
 				  l_pre += Dis( x[nroute[a2]],y[nroute[a2]], x[nroute[a2+1]],y[nroute[a2+1]] );
 
@@ -244,7 +240,6 @@ int main(int argc,char *argv[])
 		 
 			  // 組み換え前と後の比較
 			  if( l_aft < l_pre ){
-
 				  swap(nroute[a+1], nroute[a2]);
 				  count++;
 			  }
