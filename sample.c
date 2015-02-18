@@ -282,7 +282,6 @@ int main(int argc,char *argv[])
   }
   tave = tave/ave;
 
-
   /* Output City Data */
   printf("Optimized Route\n");
   for (i=0 ; i < ncity ; i++){
